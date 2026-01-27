@@ -49,7 +49,7 @@ class TaskController extends Controller
         $validate = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
-            'status' => 'sometimes|required|in:todo,in-progress,done'
+            'status' => 'sometimes|required|in:todo,in_progress,done'
         ]);
 
         $task->update($validate);
