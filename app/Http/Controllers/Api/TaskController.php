@@ -56,7 +56,9 @@ class TaskController extends Controller
         $validate = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
-            'status' => 'sometimes|required|in:todo,in_progress,done'
+            'status' => 'sometimes|required|in:todo,in_progress,done',
+            'deadline' => 'nullable|date|after:now',
+            'project_id' => 'nullable|exists:projects,id'
         ]);
 
         $task->update($validate);
@@ -75,7 +77,7 @@ class TaskController extends Controller
     }
 
     public function userTasks(User $user){
-        return repsonse()->json(
+        return response()->json(
             $user->tasks()->with('project')->get(),
             Response::HTTP_OK
         );
