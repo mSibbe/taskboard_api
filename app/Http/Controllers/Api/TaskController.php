@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Task;
+use App\Models\User;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -25,8 +28,12 @@ class TaskController extends Controller
         $validate = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'status' => 'required|in:todo,in-progress,done'
+            'status' => 'required|in:todo,in-progress,done',
+            'deadline' => 'nullable|date|after:now',
+            'project_id' => 'nullable|exists:projects,id'
         ]);
+
+        $validate['user_id'] = $request->user()->id;
 
         $task = Task::create($validate);
 
@@ -65,5 +72,31 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function userTasks(User $user){
+        return repsonse()->json(
+            $user->tasks()->with('project')->get(),
+            Response::HTTP_OK
+        );
+    }
+
+    public function projectTasks(Project $project)
+    {
+        return response()->json(
+            $project->tasks()->with('user')->get(),
+            Response::HTTP_OK
+        );
+    }
+
+    public function overdue(){
+        $tasks = Task::whereNotNUll('deadline')
+            ->where('deadline', '<', Carbon::now())
+            ->where('status', '!=', 'done')
+            ->where('user_id', auth()->id())
+            ->with(['project'])
+            ->get();
+
+        return response()->json($tasks, Response::HTTP_OK);
     }
 }

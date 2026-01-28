@@ -10,4 +10,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::apiResource('tasks', TaskController::class);
+    Route::get('/users/{user}/tasks', [TaskController::class, 'userTasks']);
+    Route::get('/projects/{project}/tasks', [TaskController::class, 'projectTasks']);
+    Route::get('/overdue', [TaskController::class, 'overdue']);
 });
