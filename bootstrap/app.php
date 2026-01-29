@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
             'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
             'guest' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+            'task.owner' => \App\Http\Middleware\EnsureTaskOwner::class,
+            'task.overdue.auth' => \App\Http\Middleware\EnsureOverdueTaskAuthorization::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     /**
-     * Benutzer registrieren
+     * register User
      */
     public function register(Request $request)
     {
@@ -37,7 +37,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Benutzer anmelden
+     * login User
      */
 
     public function login(Request $request)
@@ -64,7 +64,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Benutzer abmelden
+     * logout User
      */
 
     public function logout(Request $request)
