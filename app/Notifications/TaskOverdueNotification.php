@@ -8,6 +8,12 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Task;
 
+/**
+ * Notification that informs a user about an overdue task.
+ *
+ * This notification is stored in the database and can be
+ * retrieved via the notifications API endpoint.
+ */
 class TaskOverdueNotification extends Notification
 {
     use Queueable;
@@ -23,30 +29,24 @@ class TaskOverdueNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @return array<int, string>
+     * This notification is delivered via the database channel.
      */
     public function via($notifiable): array
     {
         return ['database'];
     }
 
+    /**
+     * Get the database representation of the notification.
+     *
+     * This data will be stored in the notifications table
+     * and can be retrieved by the authenticated user.
+     */
     public function toDatabase($notifiable){
         return [
             'task_id' => $this->task->id,
             'title' => $this->task->title,
             'message' => 'Task "'. $this->task->title.'" is overdue.'
-        ];
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
         ];
     }
 }

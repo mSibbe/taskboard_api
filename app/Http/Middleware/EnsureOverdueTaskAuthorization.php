@@ -6,12 +6,19 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Middleware that restricts editing of overdue tasks.
+ *
+ * Only authorized users (e.g. admins) are allowed
+ * to modify tasks whose deadlines have already passed.
+ */
 class EnsureOverdueTaskAuthorization
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * This middleware checks whether the requested task is overdue.
+     * If so, only authorized users are allowed to proceed.
      */
     public function handle(Request $request, Closure $next): Response
     {

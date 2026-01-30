@@ -10,10 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
 
+/**
+ * Handles all task-related API endpoints.
+ *
+ * This controller provides CRUD operations for tasks,
+ * overdue task retrieval, and task filtering by user or project.
+ */
 class TaskController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the authenticated user's tasks.
      */
     public function index()
     {
@@ -24,7 +30,7 @@ class TaskController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created task for the authenticated user.
      */
     public function store(Request $request)
     {
@@ -44,7 +50,9 @@ class TaskController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display a single task.
+     *
+     * Access is restricted by middleware to the task owner.
      */
     public function show(Task $task)
     {
@@ -52,7 +60,9 @@ class TaskController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified task.
+     *
+     * Authorization is handled via middleware and model logic.
      */
     public function update(Request $request, Task $task)
     {
@@ -70,7 +80,7 @@ class TaskController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified task from storage.
      */
     public function destroy(Task $task)
     {
@@ -79,6 +89,12 @@ class TaskController extends Controller
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Display all tasks belonging to the specified user.
+     *
+     * Access is restricted so that users can only
+     * retrieve their own tasks.
+     */
     public function userTasks(User $user){
         return response()->json(
             $user->tasks()->with('project')->get(),
@@ -86,6 +102,10 @@ class TaskController extends Controller
         );
     }
 
+    /**
+     * Display all tasks assigned to the specified project
+     * that belong to the authenticated user.
+     */
     public function projectTasks(Project $project)
     {
         return response()->json(
@@ -94,6 +114,12 @@ class TaskController extends Controller
         );
     }
 
+    /**
+     * Return all overdue tasks of the authenticated user.
+     *
+     * A task is considered overdue if its deadline is in the past
+     * and its status is not marked as done.
+     */
     public function overdue(){
         $tasks = Task::whereNotNUll('deadline')
             ->where('deadline', '<', Carbon::now())

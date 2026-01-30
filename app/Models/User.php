@@ -8,6 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Represents an authenticated application user.
+ *
+ * Users can own tasks, receive notifications,
+ * and may have different roles (e.g. admin).
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -15,8 +21,6 @@ class User extends Authenticatable
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -26,8 +30,6 @@ class User extends Authenticatable
 
     /**
      * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -47,11 +49,17 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get all tasks owned by the user.
+     */
     public function tasks()
     {
         return $this->hasMany(Task::class);
     }
 
+    /**
+     * Determine whether the user has administrative privileges.
+     */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

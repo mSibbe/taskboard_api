@@ -11,29 +11,28 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Event that is dispatched when a task becomes overdue.
+ *
+ * This event carries the affected task instance and
+ * can be handled by listeners (e.g. notifications).
+ */
 class TaskOverdue
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * The overdue task instance.
+     */
     public Task $task;
 
     /**
      * Create a new event instance.
+     *
+     * @param Task $task The overdue task instance
      */
     public function __construct(Task $task)
     {
         $this->task = $task;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
     }
 }

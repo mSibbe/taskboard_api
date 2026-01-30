@@ -5,6 +5,12 @@ namespace App\Observers;
 use App\Models\Task;
 use App\Events\TaskOverdue;
 
+/**
+ * Observes task model events.
+ *
+ * This observer reacts to task lifecycle changes
+ * and triggers events when a task becomes overdue.
+ */
 class TaskObserver
 {
     /**
@@ -48,7 +54,10 @@ class TaskObserver
     }
 
     /**
-     * Handle the Task "saved" event.
+     * Handle the "saved" event for the task model.
+     *
+     * This method is triggered after a task has been
+     * created or updated.
      */
     public function saved(Task $task): void
     {

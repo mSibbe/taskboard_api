@@ -9,10 +9,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Handles API authentication (register, login, logout)
+ * using Laravel Sanctum token-based authentication.
+ */
 class AuthController extends Controller
 {
     /**
-     * register User
+     * Registers a new user and issues an access token.
      */
     public function register(Request $request)
     {
@@ -37,7 +41,7 @@ class AuthController extends Controller
     }
 
     /**
-     * login User
+     * Authenticates a user and returns an access token.
      */
 
     public function login(Request $request)
@@ -64,7 +68,7 @@ class AuthController extends Controller
     }
 
     /**
-     * logout User
+     * Revokes the currently authenticated user's access token.
      */
 
     public function logout(Request $request)

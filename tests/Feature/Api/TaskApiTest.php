@@ -11,18 +11,29 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\TaskOverdueNotification;
 
+/**
+ * Feature tests for the Task API.
+ *
+ * These tests cover authentication, authorization,
+ * task CRUD operations, relationships, overdue logic,
+ * and notification handling.
+ */
 class TaskApiTest extends TestCase
 {
     use RefreshDatabase;
 
-
-
+    /**
+     * Ensure unauthenticated users cannot access protected task endpoints.
+     */
     public function test_unauthenticated_user_cannot_access_api_endpoints()
     {
         $response = $this->getJson('/api/tasks');
         $response->assertStatus(401);
     }
 
+    /**
+     * Ensure an authenticated user can create a task.
+     */
     public function test_user_can_create_task()
     {
         $user = User::factory()->create();
@@ -43,6 +54,9 @@ class TaskApiTest extends TestCase
         ]);
     }
 
+    /**
+     * Ensure a user can retrieve only their own tasks.
+     */
     public function test_user_can_get_all_tasks()
     {
         $user = User::factory()->create();
@@ -58,6 +72,9 @@ class TaskApiTest extends TestCase
             ->assertJsonCount(3);
     }
 
+    /**
+     * Ensure a user can update their own task.
+     */
     public function test_user_can_update_task()
     {
         $user = User::factory()->create();
@@ -79,6 +96,9 @@ class TaskApiTest extends TestCase
         ]);
     }
 
+    /**
+     * Ensure a user can delete their own task.
+     */
     public function test_user_can_delete_task()
     {
         $user = User::factory()->create();
@@ -97,6 +117,9 @@ class TaskApiTest extends TestCase
         ]);
     }
 
+    /**
+     * Ensure a user cannot see tasks owned by other users.
+     */
     public function test_user_sees_only_own_tasks()
     {
         $user = User::factory()->create();
@@ -112,6 +135,9 @@ class TaskApiTest extends TestCase
             ->assertJsonCount(1);
     }
 
+    /**
+     * Ensure a user cannot access a task owned by another user.
+     */
     public function test_user_cannot_access_other_users_task()
     {
         $user = User::factory()->create();
@@ -126,6 +152,9 @@ class TaskApiTest extends TestCase
             ->assertJsonCount(0);
     }
 
+    /**
+     * Ensure a project can return all associated tasks.
+     */
     public function test_project_has_many_tasks()
     {
         Sanctum::actingAs(User::factory()->create());
@@ -139,6 +168,9 @@ class TaskApiTest extends TestCase
             ->assertJsonCount(3);
     }
 
+    /**
+     * Ensure only overdue tasks are returned by the overdue endpoint.
+     */
     public function test_overdue_tasks()
     {
         $user = User::factory()->create();
@@ -160,6 +192,9 @@ class TaskApiTest extends TestCase
             ->assertJsonCount(1);
     }
 
+    /**
+     * Ensure a task cannot be created with a past deadline.
+     */
     public function test_task_deadline_must_be_in_future()
     {
         Sanctum::actingAs(User::factory()->create());
@@ -174,6 +209,9 @@ class TaskApiTest extends TestCase
         $response->assertStatus(422);
     }
 
+    /**
+     * Ensure an overdue task triggers a notification.
+     */
     public function test_overdue_task_triggers_notification()
     {
         Notification::fake();
